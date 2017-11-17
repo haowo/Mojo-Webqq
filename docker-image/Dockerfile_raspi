@@ -1,7 +1,13 @@
 FROM resin/rpi-raspbian:latest
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y cpanminus openssl libssl-dev g++ gcc make 
-
+RUN     apt-get -y install locales \
+        && sed -i 's/# zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/' /etc/locale.gen \
+        && locale-gen  \
+        && update-locale LC_ALL= "zh_CN.UTF-8"  \
+        && export LANGUAGE=zh_CN  \
+        && export LANG=zh_CN.UTF-8  \
+        && locale
 WORKDIR /root
 ENV TZ=Asia/Beijing
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
