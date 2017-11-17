@@ -1,10 +1,10 @@
 FROM resin/rpi-raspbian:latest
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y cpanminus libssl-dev openssl make
+RUN apt-get install -y cpanminus openssl libssl-dev g++ gcc make 
 
 WORKDIR /root
 ENV TZ=Asia/Beijing
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-RUN cpan -i App::cpanminus
+RUN cpan -i App::cpanminus | echo
 RUN cpanm Mojo::Webqq
 CMD perl -MMojo::Webqq -e 'Mojo::Webqq->new(log_encoding=>"utf8")->load(["ShowMsg","UploadQRcode"])->load("Openqq",data=>{listen=>[{port=>$ENV{MOJO_WEBQQ_PLUGIN_OPENQQ_PORT}//5000}],post_api=>$ENV{MOJO_WEBQQ_PLUGIN_OPENQQ_POST_API}})->run'
